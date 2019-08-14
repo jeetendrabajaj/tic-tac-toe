@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="Generator" content="EditPlus®">
+  <meta name="Author" content="">
+  <meta name="Keywords" content="">
+  <meta name="Description" content="">
+  <title>Document</title>
+  <style type="text/css">
+  .box-container{width:375px;height:333px}
+  .box{float:left;width:100px;height:100px; padding:10px; border:1px solid gray; padding:10px;font-size:8em;}
+  </style>
+ </head>
+ <body>
+  <div class="box-container">
+    <div class="box" id="box-1"></div>
+    <div class="box" id="box-2"></div>
+    <div class="box" id="box-3"></div>
+    <div class="box" id="box-4"></div>
+    <div class="box" id="box-5"></div>
+    <div class="box" id="box-6"></div>
+    <div class="box" id="box-7"></div>
+    <div class="box" id="box-8"></div>
+    <div class="box" id="box-9"></div>
+</div>
+ </body>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+ <script>
+ /***
+	* CORE IDEA: We have first defined an array of arrays named as winning probilities; Any Player wheather 'X' OR 'O' will first match any of the 
+	* winning probability will be announced as Winner. We have arranged an HTML Matrix of divs, On over muuse click we insert 'X' & 'O' in alternate
+	* manner. On each MouseUp we check any of the Winning Probability reached by any of 2 players. If yes We announce it Winner and Break; The script 
+	* Will run until we reach the 9 trials or Any One Player Win.
+ ***/
+	$(document).ready(function(){
+		/*Winning Probability array*/
+		var winning_probability = [ [ 1, 2, 3 ], [ 1, 4, 7 ], [ 1, 5, 9 ],[ 2, 5, 8 ], [ 3, 5, 7 ], [ 3, 6, 9 ], [ 4, 5, 6 ], [ 7, 8, 9 ] ];
+
+		/* variable next_atempt value will be applied to matrix and will change alternativily */
+		var next_atempt = 'X';
+		
+		/* Variable atmpt to track the attampts sholuld not pass 9 trials */
+		var atmpt =1;
+
+
+		/*
+			On MouseDown Enter Value 'X' OR 'O' alternatively
+			Here we have used 'mousedown' instead 'click' cause The 'mouseup' runns before Click releases, so our next 'mouseevent' will not work.
+		*/
+		$('.box').on('mousedown', function(e){
+			if($(this).text() != '') return false;		// Next Player should not overwrite previous value 
+			if(atmpt>9) return false;					// Only 9 trials allowed as the size of mattrix
+			$(this).text(next_atempt);					//insert variable next_atempt value into cell & change it's own value to next player
+			next_atempt = (next_atempt == 'X') ? 'O' :'X';
+			atmpt++;									//increase the atempt
+		});
+
+		/*
+			On MouseUp Check If all 9 atempts been used but no result, Returns- Game tie.
+			Else Matches all the cells values according to winning_probability array, and the first winner matches the matches, announced as Winner
+		*/
+		$('.box').on('mouseup', function(e){
+			if(atmpt>9) {									// Check if 9 atempts used Withdraw the Game, and announce as Tie
+				alert("Game Tie!")
+				for(var i=1;i<10;i++){
+					$("#box-"+i).css("background-color", "orange");
+				}
+				return false;
+			}
+
+			/*
+				winning_probability is an array of 3 instances array. So if we loop over the winning_probability array and match each cell value 
+				to other 2 cells values, and if find match then announce the user Winner.
+			*/
+			for(var i =0; i<winning_probability.length;i++){
+				var bx1 = $("#box-"+winning_probability[i][0]).text().trim();
+				var bx2 = $("#box-"+winning_probability[i][1]).text().trim();
+				var bx3 = $("#box-"+winning_probability[i][2]).text().trim();
+				if(bx1 === bx2 && bx1 === bx3 && bx1 !== '' && bx2 !== '' && bx3 !== '' ){
+					alert($("#box-"+winning_probability[i][0]).text() +" Won the game.");
+					$("#box-"+winning_probability[i][0]).css("background-color", "green");
+					$("#box-"+winning_probability[i][1]).css("background-color", "green");
+					$("#box-"+winning_probability[i][2]).css("background-color", "green");
+					break;
+				}
+			}
+		});
+	
+	});
+ </script>
+</html>
